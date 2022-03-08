@@ -3,23 +3,15 @@ import axios from 'axios';
 
 const URL = 'http://localhost:9000/api/todos'
 
-const initialState =      {
-  id: "",
-  name: "",
-  completed: false,
-  form: {
-    textInput: ""
-  },
-  successMessage: "",
-  errorMessage: "",
+const initialState = {
+  todos: [],
+  error: "",
 }
 
 
 
 export default class App extends React.Component {
-  state = {
-    todos: [],
-  }
+  state = initialState
 
 fetchAllTodos = () => {
   axios.get(URL)
@@ -30,7 +22,10 @@ fetchAllTodos = () => {
       })
     })
     .catch(err => {
-      debugger
+      this.setState({
+        ...this.state, 
+        error: err.message
+      })
     })
 }
 
@@ -55,6 +50,7 @@ componentDidMount() {
           <button type='submit'>Submit</button>
           <button>Hide Completed</button>
         </form>
+        <div id='error'>{this.state.error}</div>
       </div>
     )
   }
