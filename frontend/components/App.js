@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import axios from 'axios';
 
 const URL = 'http://localhost:9000/api/todos'
 
@@ -13,20 +14,45 @@ const initialState =      {
   errorMessage: "",
 }
 
+
+
 export default class App extends React.Component {
-  state = initialState
+  state = {
+    todos: [],
+  }
+
+fetchAllTodos = () => {
+  axios.get(URL)
+    .then(res => {
+      this.setState({
+        ...this.state, 
+        todos: res.data.data
+      })
+    })
+    .catch(err => {
+      debugger
+    })
+}
+
+componentDidMount() {
+  this.fetchAllTodos()
+}
+
+
   render() {
     return(
       <div>
         <h2>Todos:</h2>
         <ul>
-          <li>Walk the dog</li>
-          <li>Learn React</li>
-          <li>Have fun</li>
+          {
+            this.state.todos.map(todo => {
+              return <li key={todo.id}>{todo.name}</li>
+            })
+          }
         </ul>
         <form>
           <input/>
-          <button>Submit</button>
+          <button type='submit'>Submit</button>
           <button>Hide Completed</button>
         </form>
       </div>
