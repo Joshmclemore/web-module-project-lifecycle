@@ -6,6 +6,7 @@ const URL = 'http://localhost:9000/api/todos'
 const initialState = {
   todos: [],
   error: "",
+  todoNameInput: "",
 }
 
 
@@ -29,6 +30,14 @@ fetchAllTodos = () => {
     })
 }
 
+inputChange = evt => {
+  const { value } = evt.target
+  this.setState({
+    ...this.state,
+    todoNameInput: value
+  })
+}
+
 componentDidMount() {
   this.fetchAllTodos()
 }
@@ -46,7 +55,7 @@ componentDidMount() {
           }
         </ul>
         <form>
-          <input/>
+          <input value={this.state.todoNameInput} onChange={this.inputChange} type="text" placeholder="Type Todo"></input>
           <button type='submit'>Submit</button>
           <button>Hide Completed</button>
         </form>
