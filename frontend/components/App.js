@@ -34,7 +34,9 @@ addNewTodo = () => {
   const newTodo = {name: this.state.todoNameInput}
   axios.post(URL, newTodo)
     .then(res => {
-      this.fetchAllTodos()
+      this.setState({
+        ...this.state, todos: this.state.todos.concat(res.data.data)
+      })
       this.resetForm()
     })
     .catch(this.setErrorMessage)
@@ -53,6 +55,19 @@ inputChange = evt => {
   })
 }
 
+toggleCompleted = id => () => {
+  axios.patch(`${URL}/${id}`)
+    .then(res => {
+      this.setState({
+        ...this.state, todos: this.state.todos.map(todo => {
+          if (todo.id !== id) return todo
+          return res.data.data
+        })
+      })
+    })
+    .catch(this.setErrorMessage)
+}
+
 componentDidMount() {
   this.fetchAllTodos()
 }
@@ -65,7 +80,7 @@ componentDidMount() {
         <ul>
           {
             this.state.todos.map(todo => {
-              return <li key={todo.id}>{todo.name}</li>
+              return <li onClick={this.toggleCompleted(todo.id)} key={todo.id}>{todo.name} {todo.completed ? ' ✔️' : ''}</li>
             })
           }
         </ul>
