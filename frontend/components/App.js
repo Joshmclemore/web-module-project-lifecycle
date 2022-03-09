@@ -7,6 +7,7 @@ const initialState = {
   todos: [],
   error: "",
   todoNameInput: "",
+  displayCompleteds: true,
 }
 
 
@@ -68,6 +69,12 @@ toggleCompleted = id => () => {
     .catch(this.setErrorMessage)
 }
 
+toggleDisplayCompleteds = () => {
+  this.setState({
+    ...this.state, displayCompleteds: !this.state.displayCompleteds
+  })
+}
+
 componentDidMount() {
   this.fetchAllTodos()
 }
@@ -79,16 +86,20 @@ componentDidMount() {
         <h2>Todos:</h2>
         <ul>
           {
-            this.state.todos.map(todo => {
-              return <li onClick={this.toggleCompleted(todo.id)} key={todo.id}>{todo.name} {todo.completed ? ' ✔️' : ''}</li>
-            })
+            this.state.todos.reduce((acc, td) => {
+              if(this.state.displayCompleteds || !td.completed) return acc.concat(
+              <li onClick={this.toggleCompleted(td.id)} key={td.id}>{td.name} {td.completed ? ' ✔️' : ''}</li>
+              )
+              return acc
+            }, [])
+              
           }
         </ul>
         <form onSubmit={this.onTodoFormSubmit}>
           <input value={this.state.todoNameInput} onChange={this.inputChange} type="text" placeholder="Type Todo"></input>
-          <button type='submit'>Submit</button>
-          <button>Hide Completed</button>
+          <button type='submit'>Submit</button> 
         </form>
+          <button onClick={this.toggleDisplayCompleteds}>{this.state.displayCompleteds ? 'Hide' : 'Show'} Completed</button>
         <div id='error'>{this.state.error}</div>
       </div>
     )
